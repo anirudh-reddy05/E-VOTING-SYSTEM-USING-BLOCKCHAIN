@@ -5,24 +5,18 @@ const company = require('./routes/company');
 const candidate = require('./routes/candidate');
 const bodyParser = require('body-parser');
 const mongoose = require('./config/database');
+
 const exp = express();
-const path = require('path');
 
 require('dotenv').config({ path: __dirname + '/.env' });
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-exp.use(
-	bodyParser.urlencoded({
-		extended: true,
-	})
-);
+exp.use(bodyParser.urlencoded({ extended: true }));
 exp.use(bodyParser.json());
 
 exp.use('/company', company);
-
 exp.use('/voter', voter);
-
 exp.use('/candidate', candidate);
 
 const app = next({
@@ -33,7 +27,9 @@ const routes = require('./routes');
 const handler = routes.getRequestHandler(app);
 
 app.prepare().then(() => {
-	exp.use(handler).listen(process.env.PORT || 3000, function () {
-		console.log('Node server listening on port', process.env.PORT || 3000);
+	const PORT = process.env.PORT || 3000;
+
+	exp.use(handler).listen(PORT, () => {
+		console.log(`Server running on port ${PORT}`);
 	});
 });
